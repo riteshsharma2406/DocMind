@@ -1,6 +1,7 @@
 const { askAI } = require('../services/aiService');
 const {getStoredChunks} = require('../controllers/uploadController.js');
 const {getRelevantChunks} = require('../utils/relevant.js');
+const { set } = require('../index.js');
 
 
 async function askQuestion(req,res){
@@ -24,7 +25,8 @@ async function askQuestion(req,res){
         const relevantChunks = await getRelevantChunks(question,storedChunks);
         // console.log("Question: ", question);
         // console.log('Relevant chunks: ', relevantChunks);
-        const context = relevantChunks.join(" ");
+        const context = relevantChunks.map(c=>c.text).join(" ");
+        const source = [...new Set(relevantChunks.map(c => c.fileName))]
 
         if (!context) {
         return res.json({ answer: "No relevant information found" });
@@ -47,7 +49,7 @@ async function askQuestion(req,res){
         Answer clearly and directly:
         `);
 
-        res.status(200).json({answer});
+        res.status(200).json({answer, source});
 
   }catch(error)
   {

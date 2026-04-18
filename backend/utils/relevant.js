@@ -13,19 +13,14 @@ async function getRelevantChunks(question, chunks)
 
     return {
       text: item.text,
-      score: score
+      score: score,
+      fileName: item.fileName
     }
   });
 
-    // DEBUG: print scores
-  // console.log("SCORES:");
-  // scoredChunks.forEach(c => {
-  //   console.log(c.score.toFixed(4), "=>", c.text.substring(0, 50));
-  // });
-
   scoredChunks.sort((a,b)=> b.score - a.score);
 
-  const top = scoredChunks.slice(0,2).map(item => item.text);
+  const top = scoredChunks.slice(0,2);
 
   // console.log("Top Chunks: ", top);
 

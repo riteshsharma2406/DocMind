@@ -36,13 +36,14 @@ async function uploadFile(req, res) {
       const embedding = await getEmbedding(chunk);
       docChunks.push({
         text: chunk,
-        embedding: embedding
+        embedding: embedding,
+        fileName: req.file.originalname
       });
     }
 
     document.push({
         userId,
-        fileName: req.file.originalname,
+        // fileName: req.file.originalname,
         chunks: docChunks
     });
 
