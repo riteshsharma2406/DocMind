@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
+    "@openrouter/sdk": "^0.12.17",
     "axios": "^1.15.0",
     "cohere-ai": "^8.0.0",
     "cors": "^2.8.6",

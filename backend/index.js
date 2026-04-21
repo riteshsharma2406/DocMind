@@ -1,5 +1,6 @@
 const express = require('express');
 require('dotenv/config');
+const cors = require('cors')
 const { uploadFile } = require('./controllers/uploadController.js');
 const {askQuestion} = require('./controllers/askController.js')
 const { askAI } = require('./services/aiService.js');
@@ -8,6 +9,7 @@ const { upload } = require('./middleware/upload.js');
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 
 app.get('/', (req, res) => {

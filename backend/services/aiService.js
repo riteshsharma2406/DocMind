@@ -1,27 +1,62 @@
 const {GoogleGenerativeAI} = require("@google/generative-ai");
 const {CohereClient} = require('cohere-ai');
 
+const OpenAI = require('openai');
+
+const openai = new OpenAI({
+  baseURL: "https://openrouter.ai/api/v1",
+  apiKey: process.env.OPENROUTER_API_KEY,
+});
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);  //gemini 
 const cohere = new CohereClient({token: process.env.COHERE_API_KEY}); //cohere
+// const openrouter = new OpenRouter({apiKey: process.env.OPENROUTER_API_KEY});
 
-async function askAI(prompt)
-{
-    try{
-        const model = genAI.getGenerativeModel({
-            model: "gemini-3-flash-preview"
-        });
+// async function askAI(prompt)
+// {
+//     try{
+//         const model = genAI.getGenerativeModel({
+//             model: "gemini-3-flash-preview"
+//         });
 
-        const result = model.generateContent(prompt);
-        const response = (await result).response;
+//         const result = model.generateContent(prompt);
+//         const response = (await result).response;
 
-        return response.text();
+//         return response.text();
 
-    }catch(error)
-    {
-        console.log("Gemini Error: ", error.message);
-        throw error;
+
+//     }catch(error)
+//     {
+//         console.log("Gemini Error: ", error.message);
+//         throw error;
         
-    }
+//     }
+// }
+
+async function askAI(prompt) {
+  try {
+    const openai = new OpenAI({
+      baseURL: "https://openrouter.ai/api/v1",
+      apiKey: process.env.OPENROUTER_API_KEY,
+    });
+
+    const completion = await openai.chat.completions.create({
+      model: "openai/gpt-oss-120b:free",
+      messages: [
+        {
+          role: "user",
+          content: prompt   // 👈 simple text (no need for array)
+        }
+      ],
+      max_tokens: 1000
+    });
+
+    return completion?.choices?.[0]?.message?.content || "No response";
+
+  } catch (error) {
+    console.log("AI Error:", error.message);
+    throw error;
+  }
 }
 
 async function getEmbedding(text)
