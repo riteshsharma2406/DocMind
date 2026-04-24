@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const {findUsername, findUser, saveUser} = require('../repository/userRepository.js');
 
 async function signup(req, res){
@@ -45,9 +46,15 @@ async function login(req,res)
             return res.status(400).json({message: "Invalid Credentials"});
         }
 
+        const token = jwt.sign(
+            {userId: user.userId},
+            process.env.JWT_SECRET,
+            {expiresIn: "1h"}
+        )
+
         res.status(200).json({
             message: "Login successful",
-            userId: user.userId
+            token
         })
     }catch(e)
     {

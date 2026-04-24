@@ -18,7 +18,7 @@ async function uploadFile(req, res) {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    const userId = req.body.userId || "defaultUser";
+    const userId = req.userId || "defaultUser";
 
     const filePath = req.file.path;
 

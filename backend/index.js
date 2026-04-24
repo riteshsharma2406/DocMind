@@ -6,6 +6,7 @@ const {askQuestion} = require('./controllers/askController.js')
 const { askAI } = require('./services/aiService.js');
 const { upload } = require('./middleware/upload.js');
 const { signup, login } = require('./controllers/authController.js');
+const authMiddleWare = require('./middleware/authMiddleWare.js')
 
 const app = express();
 
@@ -28,9 +29,9 @@ app.get('/test-ai', async (req, res) => {
   }
 });
 
-app.post('/upload', upload.single("file"), uploadFile); //uploadController.js
+app.post('/upload',authMiddleWare,  upload.single("file"), uploadFile); //uploadController.js
 
-app.post('/ask', askQuestion) //askController.js
+app.post('/ask',authMiddleWare, askQuestion) //askController.js
 
 app.post('/signup', signup); //authController.js
 

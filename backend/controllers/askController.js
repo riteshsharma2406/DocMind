@@ -8,7 +8,7 @@ async function askQuestion(req,res){
 
     try{
         const {question} = req.body;
-        const userId = req.body.userId || "defaultUser";
+        const userId = req.userId || "defaultUser";
 
         if(!question)
         {
