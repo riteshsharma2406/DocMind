@@ -1,131 +1,166 @@
 import { useState } from 'react'
 import './App.css'
 
-
 function App() {
-
   const [file, setFile] = useState(null);
   const [userId, setUserId] = useState("");
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
   const [sources, setSources] = useState([]);
+  const [uploading, setUploading] = useState(false);
+  const [asking, setAsking] = useState(false);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
 
-
-  // console.log("userId:", userId);
-  // console.log("file:", file);
-  // console.log(question)
-
-
-  // handle upload 
   const handleUpload = async () => {
-    if(!file || !userId)
-    {
+    if (!file || !userId) {
       alert("File and userId required");
       return;
     }
-
+    setUploading(true);
     const formData = new FormData();
-    formData.append("file",file);
+    formData.append("file", file);
     formData.append("userId", userId);
-
-    try{
-      const res = await fetch('http://localhost:3000/upload',{
-        method: 'POST',
-        body: formData
-      });
-
+    try {
+      const res = await fetch('http://localhost:3000/upload', { method: 'POST', body: formData });
       const data = await res.json();
       console.log(data);
-
-      alert("Upload Successful")
-    }catch(e)
-    {
-      console.log(e)
-      alert("Upload Failed")
+      setUploadSuccess(true);
+      setTimeout(() => setUploadSuccess(false), 3000);
+    } catch (e) {
+      console.log(e);
+      alert("Upload Failed");
+    } finally {
+      setUploading(false);
     }
   }
 
-
-  //handle ask
-  const handleAsk = async ()=>{
-    if(!question || !userId)
-    {
+  const handleAsk = async () => {
+    if (!question || !userId) {
       alert("Question and UserId required");
       return;
     }
-
-    try{
-      const res = await fetch('http://localhost:3000/ask',{
+    setAsking(true);
+    try {
+      const res = await fetch('http://localhost:3000/ask', {
         method: 'POST',
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({question,userId})
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question, userId })
       });
-
       const data = await res.json();
-
-      console.log(data);
-
       setAnswer(data.answer);
       setSources(data.source || []);
-      
-    }catch(e)
-    {
+    } catch (e) {
       console.log(e);
-      alert("Error fetching answer")
+      alert("Error fetching answer");
+    } finally {
+      setAsking(false);
     }
   }
 
   return (
     <>
-      <div>
-        <h1>DocMind AI</h1>
-
-        <h2>Upload PDF</h2>
-
-        <input type="text" name="" id="" 
-          placeholder='enter user id'
-          value={userId}
-          onChange={(e)=>setUserId(e.target.value)}
-        />
-
-        <input type="file" name="" id="" 
-          onChange={(e)=>setFile(e.target.files[0])}
-        />
-
-        <button onClick={handleUpload}>Upload</button>
-
-        <h2>Ask Question</h2>
-
-        <input type="text" name="" id=""
-          placeholder='Ask your question'
-          value={question}
-          onChange={(e)=>setQuestion(e.target.value)}
-        />
-
-        <button onClick={handleAsk}>Ask</button>
-
-        <h2>Result</h2>
-
-        {answer && (
-          <div>
-            <h3>Answer:</h3>
-            <p>{answer}</p>
-
-            <h3>Source:</h3>
-            <ul>
-              {sources.map((source,key)=>{
-                return <li key={key}>{source}</li>
-              })}
-            </ul>
+      <div className="app-wrapper">
+        <header className="header">
+          <div className="logo-badge">
+            <div className="logo-dot"></div>
+            AI Document Intelligence
           </div>
-        )}
+          <h1 className="app-title">DocMind AI</h1>
+          <p className="app-subtitle">Upload a PDF. Ask anything. Get instant answers.</p>
+        </header>
 
+        <div className="main-card">
+
+          {/* Upload Card */}
+          <div className="card">
+            <div className="card-header">
+              <div className="card-icon purple">📄</div>
+              <span className="card-title">Upload Document</span>
+            </div>
+            <div className="field-group">
+              <div className="input-wrap">
+                <label className="input-label">User ID</label>
+                <input
+                  type="text"
+                  placeholder="e.g. user_123"
+                  value={userId}
+                  onChange={(e) => setUserId(e.target.value)}
+                />
+              </div>
+              <div className="input-wrap">
+                <label className="input-label">PDF File</label>
+                <div className="file-drop">
+                  <input type="file" accept=".pdf" onChange={(e) => setFile(e.target.files[0])} />
+                  <div className="file-drop-icon">📂</div>
+                  <div className="file-drop-text">
+                    <span>Choose file</span> or drag & drop here
+                  </div>
+                  {file && <div className="file-name">✓ {file.name}</div>}
+                </div>
+              </div>
+            </div>
+            <button className="btn btn-primary" onClick={handleUpload} disabled={uploading}>
+              {uploading ? <><div className="btn-spinner"></div> Uploading…</> : <>↑ Upload PDF</>}
+            </button>
+            {uploadSuccess && (
+              <div className="success-toast">✓ Document uploaded successfully!</div>
+            )}
+          </div>
+
+          <div className="divider" />
+
+          {/* Ask Card */}
+          <div className="card">
+            <div className="card-header">
+              <div className="card-icon teal">💬</div>
+              <span className="card-title">Ask a Question</span>
+            </div>
+            <div className="field-group">
+              <div className="input-wrap">
+                <label className="input-label">Your Question</label>
+                <input
+                  type="text"
+                  placeholder="What does the document say about…?"
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleAsk()}
+                />
+              </div>
+            </div>
+            <button className="btn btn-secondary" onClick={handleAsk} disabled={asking}>
+              {asking ? <><div className="btn-spinner"></div> Thinking…</> : <>⚡ Ask DocMind</>}
+            </button>
+          </div>
+
+          {/* Result Card */}
+          {answer && (
+            <div className="card answer-block">
+              <div className="card-header">
+                <div className="card-icon green">✨</div>
+                <span className="card-title">Answer</span>
+              </div>
+              <div className="answer-text">{answer}</div>
+              {sources.length > 0 && (
+                <>
+                  <div className="sources-label">Sources</div>
+                  <ul className="sources-list">
+                    {sources.map((source, key) => (
+                      <li key={key}>
+                        <div className="source-dot"></div>
+                        {source}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </div>
+          )}
+
+        </div>
       </div>
     </>
   )
-  
 }
 
 export default App
+

@@ -5,6 +5,7 @@ const { uploadFile } = require('./controllers/uploadController.js');
 const {askQuestion} = require('./controllers/askController.js')
 const { askAI } = require('./services/aiService.js');
 const { upload } = require('./middleware/upload.js');
+const { signup, login } = require('./controllers/authController.js');
 
 const app = express();
 
@@ -30,6 +31,10 @@ app.get('/test-ai', async (req, res) => {
 app.post('/upload', upload.single("file"), uploadFile); //uploadController.js
 
 app.post('/ask', askQuestion) //askController.js
+
+app.post('/signup', signup); //authController.js
+
+app.post('/login', login); //authController.js
 
 const PORT = 3000;
 app.listen(PORT, () => {
