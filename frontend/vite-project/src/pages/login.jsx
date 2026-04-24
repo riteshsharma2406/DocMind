@@ -5,6 +5,19 @@ function Login() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "error",
+  });
+
+  const showToast = (message, type = "error") => {
+    setToast({ show: true, message, type });
+
+    setTimeout(() => {
+      setToast({ show: false, message: "", type: "error" });
+    }, 3000);
+  };
 
   const handleLogin = async () => {
     setLoading(true);
@@ -19,11 +32,11 @@ function Login() {
         localStorage.setItem("token", data.token);
         window.location.href = "/";
       } else {
-        alert(data.message);
+        showToast(data.message, "error");
       }
     } catch (e) {
-        console.log(e)
-      alert("Login failed. Please try again.");
+      console.log(e);
+      showToast("Login failed. Please try again.", "error");
     } finally {
       setLoading(false);
     }
@@ -31,13 +44,19 @@ function Login() {
 
   return (
     <>
-
       <div className="auth-wrapper">
+        {toast.show && (
+          <div className={`custom-toast ${toast.type}`}>{toast.message}</div>
+        )}
         <div className="auth-card">
           <div className="auth-logo">
-            <div className="logo-badge"><div className="logo-dot"></div>DocMind AI</div>
+            <div className="logo-badge">
+              <div className="logo-dot"></div>DocMind AI
+            </div>
             <div className="auth-title">Welcome back</div>
-            <div className="auth-subtitle">Sign in to continue to your workspace</div>
+            <div className="auth-subtitle">
+              Sign in to continue to your workspace
+            </div>
           </div>
 
           <div className="field-group">
@@ -62,15 +81,28 @@ function Login() {
                   onKeyDown={(e) => e.key === "Enter" && handleLogin()}
                   style={{ paddingRight: "42px" }}
                 />
-                <button className="eye-btn" onClick={() => setShowPassword(!showPassword)}>
+                <button
+                  className="eye-btn"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
                   {showPassword ? "🙈" : "👁️"}
                 </button>
               </div>
             </div>
           </div>
 
-          <button className="btn-primary" onClick={handleLogin} disabled={loading}>
-            {loading ? <><div className="btn-spinner"></div> Signing in…</> : <>→ Sign In</>}
+          <button
+            className="btn-primary"
+            onClick={handleLogin}
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <div className="btn-spinner"></div> Signing in…
+              </>
+            ) : (
+              <>→ Sign In</>
+            )}
           </button>
 
           <div className="divider">

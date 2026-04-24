@@ -2,8 +2,20 @@ import React from "react";
 import { useState } from "react";
 
 const Home = () => {
+  const token = localStorage.getItem("token");
 
-  const token = localStorage.getItem("token"); 
+  const getUsernameFromToken = () => {
+    try {
+      const payload = token.split(".")[1];
+      const decoded = JSON.parse(atob(payload));
+      return decoded.username || decoded.name || decoded.sub || "User";
+    } catch {
+      return "User";
+    }
+  };
+
+  const username = getUsernameFromToken();
+  const avatarLetter = username.charAt(0).toUpperCase();
 
   const [file, setFile] = useState(null);
   const [question, setQuestion] = useState("");
@@ -12,12 +24,28 @@ const Home = () => {
   const [uploading, setUploading] = useState(false);
   const [asking, setAsking] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "success" // success | error | info
+});
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  };
+
+  const showToast = (message, type = "success") => {
+  setToast({ show: true, message, type });
+
+  setTimeout(() => {
+    setToast({ show: false, message: "", type: "success" });
+  }, 3000);
+};
 
   const handleUpload = async () => {
-
-    if(!file)
-    {
-      alert('File Required');
+    if (!file) {
+      showToast("File is required", "error");
       return;
     }
 
@@ -28,7 +56,7 @@ const Home = () => {
       const res = await fetch("http://localhost:3000/upload", {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
         body: formData,
       });
@@ -38,17 +66,15 @@ const Home = () => {
       setTimeout(() => setUploadSuccess(false), 3000);
     } catch (e) {
       console.log(e);
-      alert("Upload Failed");
+      showToast("Upload failed", "error");
     } finally {
       setUploading(false);
     }
   };
 
   const handleAsk = async () => {
-
-    if(!question)
-    {
-      alert('Question required');
+    if (!question) {
+      showToast("Question required", "error");
       return;
     }
 
@@ -56,18 +82,18 @@ const Home = () => {
     try {
       const res = await fetch("http://localhost:3000/ask", {
         method: "POST",
-        headers: { 
+        headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({question})
+        body: JSON.stringify({ question }),
       });
       const data = await res.json();
       setAnswer(data.answer);
       setSources(data.source || []);
     } catch (e) {
       console.log(e);
-      alert("Error fetching answer");
+      showToast("Error fetching answer", "error");
     } finally {
       setAsking(false);
     }
@@ -75,6 +101,24 @@ const Home = () => {
 
   return (
     <>
+      <div className="profile-card">
+        <div className="profile-avatar">{avatarLetter}</div>
+        <div className="profile-info">
+          <div className="profile-name">{username}</div>
+          <div className="profile-status">
+          </div>
+        </div>
+        <div className="profile-sep" />
+        <button className="logout-btn" onClick={handleLogout}>
+          Sign out <i className="logout-arrow">→</i>
+        </button>
+      </div>
+      {toast.show && (
+        <div className={`custom-toast ${toast.type}`}>
+          {toast.message}
+        </div>
+      )}
+
       <div className="app-wrapper">
         <header className="header">
           <div className="logo-badge">

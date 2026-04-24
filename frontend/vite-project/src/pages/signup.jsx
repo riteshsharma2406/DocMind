@@ -6,6 +6,19 @@ function Signup() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "error",
+  });
+
+  const showToast = (message, type = "error") => {
+    setToast({ show: true, message, type });
+
+    setTimeout(() => {
+      setToast({ show: false, message: "", type: "error" });
+    }, 3000);
+  };
 
   const handleSignup = async () => {
     setLoading(true);
@@ -18,37 +31,54 @@ function Signup() {
       const data = await res.json();
       if (res.ok) {
         setSuccess(true);
+        showToast(data.message, "success");
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 1200);
+      } else {
+        showToast(data.message, "error");
       }
-      alert(data.message);
     } catch (e) {
-        console.log(e)
-      alert("Signup failed. Please try again.");
+      console.log(e);
+      showToast("Signup failed. Please try again.", "error");
     } finally {
       setLoading(false);
     }
   };
 
-  const strengthScore = password.length === 0 ? 0
-    : password.length < 6 ? 1
-    : password.length < 10 ? 2
-    : 3;
+  const strengthScore =
+    password.length === 0
+      ? 0
+      : password.length < 6
+        ? 1
+        : password.length < 10
+          ? 2
+          : 3;
 
   const strengthLabel = ["", "Weak", "Good", "Strong"];
   const strengthColor = ["", "#f87171", "#fbbf24", "#34d399"];
 
   return (
     <>
-
       <div className="auth-wrapper">
+        {toast.show && (
+          <div className={`custom-toast ${toast.type}`}>{toast.message}</div>
+        )}
         <div className="auth-card">
           <div className="auth-logo">
-            <div className="logo-badge"><div className="logo-dot"></div>DocMind AI</div>
+            <div className="logo-badge">
+              <div className="logo-dot"></div>DocMind AI
+            </div>
             <div className="auth-title">Create account</div>
-            <div className="auth-subtitle">Start querying your documents in seconds</div>
+            <div className="auth-subtitle">
+              Start querying your documents in seconds
+            </div>
           </div>
 
           {success && (
-            <div className="success-toast">✓ Account created! You can now sign in.</div>
+            <div className="success-toast">
+              ✓ Account created! You can now sign in.
+            </div>
           )}
 
           <div className="field-group">
@@ -72,7 +102,10 @@ function Signup() {
                   onKeyDown={(e) => e.key === "Enter" && handleSignup()}
                   style={{ paddingRight: "42px" }}
                 />
-                <button className="eye-btn" onClick={() => setShowPassword(!showPassword)}>
+                <button
+                  className="eye-btn"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
                   {showPassword ? "🙈" : "👁️"}
                 </button>
               </div>
@@ -82,10 +115,18 @@ function Signup() {
                     <div
                       key={i}
                       className="strength-seg"
-                      style={{ background: strengthScore >= i ? strengthColor[strengthScore] : undefined }}
+                      style={{
+                        background:
+                          strengthScore >= i
+                            ? strengthColor[strengthScore]
+                            : undefined,
+                      }}
                     />
                   ))}
-                  <span className="strength-text" style={{ color: strengthColor[strengthScore] }}>
+                  <span
+                    className="strength-text"
+                    style={{ color: strengthColor[strengthScore] }}
+                  >
                     {strengthLabel[strengthScore]}
                   </span>
                 </div>
@@ -93,8 +134,18 @@ function Signup() {
             </div>
           </div>
 
-          <button className="btn-primary" onClick={handleSignup} disabled={loading}>
-            {loading ? <><div className="btn-spinner"></div> Creating account…</> : <>✦ Create Account</>}
+          <button
+            className="btn-primary"
+            onClick={handleSignup}
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <div className="btn-spinner"></div> Creating account…
+              </>
+            ) : (
+              <>✦ Create Account</>
+            )}
           </button>
 
           <div className="divider">
