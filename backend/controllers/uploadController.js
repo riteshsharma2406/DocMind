@@ -62,9 +62,28 @@ async function uploadFile(req, res) {
   }
 }
 
+function getUserDocument(req,res)
+{
+  try{
+    const userId = req.userId;
+    const userDocs = document.filter(doc => doc.userId === userId);
+
+    const files = [...new Set(userDocs.flatMap(doc => doc.chunks.map(chunk => chunk.fileName)))];
+
+    res.status(200).json({
+      files,
+      message: "All user documents"
+    })
+  }catch(e)
+  {
+    console.log(e);
+    res.status(500).json({message: "Error fetching document"})
+  }
+}
+
 function getStoredChunks(userId) {
   const userDoc = document.filter(doc => doc.userId === userId);
   return userDoc.flatMap(doc=> doc.chunks);
 }
 
-module.exports = { uploadFile, getStoredChunks };
+module.exports = { uploadFile, getStoredChunks, getUserDocument};

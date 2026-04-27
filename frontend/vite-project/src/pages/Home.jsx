@@ -27,8 +27,8 @@ const Home = () => {
   const [toast, setToast] = useState({
     show: false,
     message: "",
-    type: "success" // success | error | info
-});
+    type: "success", // success | error | info
+  });
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -36,12 +36,12 @@ const Home = () => {
   };
 
   const showToast = (message, type = "success") => {
-  setToast({ show: true, message, type });
+    setToast({ show: true, message, type });
 
-  setTimeout(() => {
-    setToast({ show: false, message: "", type: "success" });
-  }, 3000);
-};
+    setTimeout(() => {
+      setToast({ show: false, message: "", type: "success" });
+    }, 3000);
+  };
 
   const handleUpload = async () => {
     if (!file) {
@@ -105,8 +105,7 @@ const Home = () => {
         <div className="profile-avatar">{avatarLetter}</div>
         <div className="profile-info">
           <div className="profile-name">{username}</div>
-          <div className="profile-status">
-          </div>
+          <div className="profile-status"></div>
         </div>
         <div className="profile-sep" />
         <button className="logout-btn" onClick={handleLogout}>
@@ -114,9 +113,7 @@ const Home = () => {
         </button>
       </div>
       {toast.show && (
-        <div className={`custom-toast ${toast.type}`}>
-          {toast.message}
-        </div>
+        <div className={`custom-toast ${toast.type}`}>{toast.message}</div>
       )}
 
       <div className="app-wrapper">
@@ -242,6 +239,10 @@ const Home = () => {
               )}
             </div>
           )}
+
+          <button onClick={() => (window.location.href = "/mcq")}>
+            Generate MCQ
+          </button>
         </div>
       </div>
     </>
