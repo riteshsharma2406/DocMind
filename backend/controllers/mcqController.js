@@ -27,6 +27,8 @@ async function generateMCQ(req,res){
             }
         ]
             Rules:
+            - "options" must contain FULL answer choices, not A/B/C/D
+            - "correctAnswer" must exactly match one of the options
             - No Explanation
             - No markdown
             - No extra text

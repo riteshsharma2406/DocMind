@@ -240,8 +240,8 @@ const Home = () => {
             </div>
           )}
 
-          <button onClick={() => (window.location.href = "/mcq")}>
-            Generate MCQ
+          <button className="btn btn-secondary" onClick={() => (window.location.href = "/mcq")}>
+            🤔 Generate MCQ
           </button>
         </div>
       </div>
