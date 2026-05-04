@@ -15,7 +15,7 @@ async function askQuestion(req,res){
             return res.status(400).json({error: "Question required"})
         }
 
-        let storedChunks = getStoredChunks(userId);
+        let storedChunks = await getStoredChunks(userId);
 
         if(storedChunks.length === 0 )
         {

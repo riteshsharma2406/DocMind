@@ -3,14 +3,15 @@ const { PDFParse } = require('pdf-parse');
 const path = require('path');
 const { getEmbedding } = require('../services/aiService.js');
 const { chunkText } = require('../utils/chunk.js');
-const DATA_PATH = path.join(__dirname, '../data/data.json');
+// const DATA_PATH = path.join(__dirname, '../data/data.json');
+const Document = require('../models/document.js')
 
-let document = [];
+// let document = [];
 
-if(fs.existsSync(DATA_PATH))
-{
-    document = JSON.parse(fs.readFileSync(DATA_PATH));
-}
+// if(fs.existsSync(DATA_PATH))
+// {
+//     document = JSON.parse(fs.readFileSync(DATA_PATH));
+// }
 
 async function uploadFile(req, res) {
   try {
@@ -41,13 +42,21 @@ async function uploadFile(req, res) {
       });
     }
 
-    document.push({
-        userId,
-        // fileName: req.file.originalname,
-        chunks: docChunks
-    });
+    // document.push({
+    //     userId,
+    //     // fileName: req.file.originalname,
+    //     chunks: docChunks
+    // });
 
-    fs.writeFileSync(DATA_PATH, JSON.stringify(document, null, 2));
+
+
+    // fs.writeFileSync(DATA_PATH, JSON.stringify(document, null, 2));
+
+    await Document.create({
+      userId,
+      chunks: docChunks
+
+    })
 
     fs.unlinkSync(filePath);
 
@@ -62,11 +71,11 @@ async function uploadFile(req, res) {
   }
 }
 
-function getUserDocument(req,res)
+async function getUserDocument(req,res)
 {
   try{
     const userId = req.userId;
-    const userDocs = document.filter(doc => doc.userId === userId);
+    const userDocs = await Document.find({userId})
 
     const files = [...new Set(userDocs.flatMap(doc => doc.chunks.map(chunk => chunk.fileName)))];
 
@@ -81,8 +90,8 @@ function getUserDocument(req,res)
   }
 }
 
-function getStoredChunks(userId) {
-  const userDoc = document.filter(doc => doc.userId === userId);
+async function getStoredChunks(userId) {
+  const userDoc = await Document.find({userId})
   return userDoc.flatMap(doc=> doc.chunks);
 }
 

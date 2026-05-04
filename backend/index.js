@@ -8,6 +8,7 @@ const { upload } = require('./middleware/upload.js');
 const { signup, login } = require('./controllers/authController.js');
 const {generateMCQ} = require('./controllers/mcqController.js')
 const authMiddleWare = require('./middleware/authMiddleWare.js')
+const {connectDB} = require('./config/db.js')
 
 const app = express();
 
@@ -42,6 +43,8 @@ app.post('/login', login); //authController.js
 
 app.get('/document', authMiddleWare, getUserDocument) //uploadController.js
 
+
+connectDB();
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log("Server is running");

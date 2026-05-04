@@ -6,7 +6,7 @@ async function generateMCQ(req,res){
         const userId = req.userId;
         const {fileName} = req.body;
         
-        const allChunks = getStoredChunks(userId);
+        const allChunks = await getStoredChunks(userId);
         const storedChunks = allChunks.filter(chunk => chunk.fileName === fileName)
         
         if(!storedChunks.length)

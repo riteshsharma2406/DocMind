@@ -89,6 +89,13 @@ const Home = () => {
         body: JSON.stringify({ question }),
       });
       const data = await res.json();
+
+      if(!res.ok)
+      {
+        showToast(data.error || "Failed to fetch answer", 'error');
+        return;
+      }
+      
       setAnswer(data.answer);
       setSources(data.source || []);
     } catch (e) {
