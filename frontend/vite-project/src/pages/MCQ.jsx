@@ -13,7 +13,7 @@ const MCQ = () => {
     const fetchDocument = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:3000/document", {
+        const res = await fetch("https://docmind-backend-31ib.onrender.com/document", {
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();
@@ -38,7 +38,7 @@ const MCQ = () => {
     setSelectedAnswer({});
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:3000/mcq", {
+      const res = await fetch("https://docmind-backend-31ib.onrender.com/mcq", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ fileName: selectedFile }),
