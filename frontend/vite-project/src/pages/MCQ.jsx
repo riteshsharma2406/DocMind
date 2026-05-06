@@ -1,182 +1,3 @@
-// import React, { useEffect, useState } from "react";
-
-// const MCQ = () => {
-//   const [files, setFiles] = useState([]);
-//   const [selectedFile, setSelectedFile] = useState("");
-//   const [mcqs, setMcqs] = useState([]);
-//   const [selectedAnswer, setSelectedAnswer] = useState({});
-//   const [score, setScore] = useState(null);
-//   const [loading, setLoading] = useState(false);
-//   const [toast, setToast] = useState({
-//     show: false,
-//     message: "",
-//     type: "success",
-//   });
-
-//   useEffect(() => {
-//     const fetchDocument = async () => {
-//       try {
-//         const token = localStorage.getItem("token");
-//         const res = await fetch("http://localhost:3000/document", {
-//           headers: {
-//             Authorization: `Bearer ${token}`,
-//           },
-//         });
-
-//         const data = await res.json();
-
-//         setFiles(data.files || []);
-//       } catch (e) {
-//         console.log(e);
-//       }
-//     };
-
-//     fetchDocument();
-//   }, []);
-
-//   const handleGenerateMCQ = async () => {
-//     if (!selectedFile) {
-//       showToast("Please Select a file", "error");
-//       return;
-//     }
-
-//     setLoading(true);
-
-//     try {
-//       const token = localStorage.getItem("token");
-//       const res = await fetch("http://localhost:3000/mcq", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `Bearer ${token}`,
-//         },
-//         body: JSON.stringify({
-//           fileName: selectedFile,
-//         }),
-//       });
-
-//       const data = await res.json();
-//       setMcqs(JSON.parse(data.mcqs));
-
-//     } catch (e) {
-//       console.log(e);
-//       setToast("Failed to generate MCQ", "error");
-//     }finally{
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleSubmitQuiz = () => {
-//     let calculatedScore = 0;
-//     mcqs.forEach((mcq,idx)=>{
-//       if(selectedAnswer[idx] === mcq.correctAnswer)
-//       {
-//         calculatedScore++;
-//       }
-//     })
-//     setScore(calculatedScore);
-//   }
-
-//   const showToast = (message, type = "success") => {
-//     setToast({
-//       show: true,
-//       message,
-//       type,
-//     });
-
-//     setTimeout(() => {
-//       setToast({
-//         show: false,
-//         message: "",
-//         type: "success",
-//       });
-//     }, 3000);
-//   };
-
-//   return (
-//     <div className="mcq-wrapper">
-//       <h1>Generate MCQ Quiz</h1>
-//       <select
-//         name=""
-//         id=""
-//         value={selectedFile}
-//         onChange={(e) => {
-//           setSelectedFile(e.target.value);
-//         }}
-//       >
-//         <option value="">Select Document</option>
-//         {files.map((file, idx) => (
-//           <option value={file} key={idx}>
-//             {file}
-//           </option>
-//         ))}
-//       </select>
-//       <button onClick={handleGenerateMCQ}>
-//         {loading ? "Generating..." : "Generate MCQ"}
-//       </button>
-
-//       {mcqs.length>0 && (
-//         <div className="quiz-container">
-//           {mcqs.map((mcq,idx) => (
-//             <div key={idx} className="mcq-card">
-//               <h3>
-//                 {idx +1}. {mcq.question}
-//               </h3>
-//               {mcq.option.map((opt,i) => (
-//                 <button type="button"
-//                         key={i} 
-//                         className={`option-btn ${selectedAnswer[idx] === opt ? "selected": ""}`}
-//                         onClick={()=>{
-//                           setSelectedAnswer((prev)=>({
-//                             ...prev,
-//                             [idx]:opt
-//                           }))
-//                         }}
-//                 >{opt}</button>
-//               ))}
-//             </div>
-//           ))}
-//         </div>
-//       )}
-
-//       {mcqs.length>0 && (
-//         <button onClick={handleSubmitQuiz}>Submit Quiz</button>
-//       )}
-
-//       {score !== null && (
-//         <div className="score-card">
-//           Your Score: {score}/{mcqs.length}
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default MCQ;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import React, { useEffect, useState } from "react";
 
 const MCQ = () => {
@@ -223,6 +44,12 @@ const MCQ = () => {
         body: JSON.stringify({ fileName: selectedFile }),
       });
       const data = await res.json();
+
+      if(!res.ok)
+      {
+        showToast(data.message || "Failed to Generate MCQ", "error")
+      }
+
       setMcqs(JSON.parse(data.mcqs));
       showToast("Quiz generated! Good luck.", "success");
     } catch (e) {
@@ -241,6 +68,8 @@ const MCQ = () => {
     setScore(calculatedScore);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  
 
   const toastIcons = { success: "✓", error: "✕", info: "ℹ" };
   const answeredCount = Object.keys(selectedAnswer).length;
@@ -296,8 +125,8 @@ const MCQ = () => {
               onChange={(e) => setSelectedFile(e.target.value)}
             >
               <option value="">Select a document…</option>
-              {files.map((file, idx) => (
-                <option value={file} key={idx}>{file}</option>
+              {files.map((file) => (
+                <option value={file.fileName} key={file.id}>{file.fileName}</option>
               ))}
             </select>
             <button className="btn-generate" onClick={handleGenerateMCQ} disabled={loading}>

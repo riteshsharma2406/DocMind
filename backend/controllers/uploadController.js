@@ -77,7 +77,13 @@ async function getUserDocument(req,res)
     const userId = req.userId;
     const userDocs = await Document.find({userId})
 
-    const files = [...new Set(userDocs.flatMap(doc => doc.chunks.map(chunk => chunk.fileName)))];
+    // const files = [...new Set(userDocs.flatMap(doc => doc.chunks.map(chunk => chunk.fileName)))];
+
+    const files = userDocs.map(doc => ({
+      id: doc._id,
+      fileName: doc.chunks?.[0]?.fileName || "Unknown",
+      uploadedAt: doc.createdAt,
+    }))
 
     res.status(200).json({
       files,
@@ -90,9 +96,34 @@ async function getUserDocument(req,res)
   }
 }
 
+async function deleteDocument(req, res)
+{
+  try{
+    const userId = req.userId;
+    const docId = req.params.id;
+
+    const deleteDoc = await Document.findOneAndDelete({
+      _id: docId,
+      userId
+    });
+
+    if(!deleteDoc)
+    {
+      return res.status(404).json({message: "Document Not found"})
+    }
+
+    res.status(200).json({message: "Document deleted successfully"})
+
+  }catch(e)
+  {
+    console.log(e);
+    res.status(500).json({message: "Delete Failed"})
+  }
+}
+
 async function getStoredChunks(userId) {
   const userDoc = await Document.find({userId})
   return userDoc.flatMap(doc=> doc.chunks);
 }
 
-module.exports = { uploadFile, getStoredChunks, getUserDocument};
+module.exports = { uploadFile, getStoredChunks, getUserDocument, deleteDocument};

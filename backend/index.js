@@ -1,7 +1,7 @@
 const express = require('express');
 require('dotenv/config');
 const cors = require('cors')
-const { uploadFile, getUserDocument } = require('./controllers/uploadController.js');
+const { uploadFile, getUserDocument, deleteDocument } = require('./controllers/uploadController.js');
 const {askQuestion} = require('./controllers/askController.js')
 const { askAI } = require('./services/aiService.js');
 const { upload } = require('./middleware/upload.js');
@@ -42,6 +42,8 @@ app.post('/signup', signup); //authController.js
 app.post('/login', login); //authController.js
 
 app.get('/document', authMiddleWare, getUserDocument) //uploadController.js
+
+app.delete('/document/:id', authMiddleWare, deleteDocument) //uploadController.js
 
 
 connectDB();

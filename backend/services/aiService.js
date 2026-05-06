@@ -59,15 +59,49 @@ async function askAI(prompt) {
   }
 }
 
+
 async function getEmbedding(text)
 {
-    const embed = await cohere.embed({
-        texts: [text],
-        model: "embed-v4.0",
-        input_type: "search_document", // Mandatory for v3 and v4 models
-        embedding_types: ["float"],
+  try{
+    const openai = new OpenAI({
+      baseURL: "https://openrouter.ai/api/v1",
+      apiKey: process.env.OPENROUTER_API_KEY,
+    });
+
+    const embedding = await openai.embeddings.create({
+      model: "nvidia/llama-nemotron-embed-vl-1b-v2:free",
+      input: [
+        {
+          content: [
+            { type: "text", text: text},
+          ]
+        }
+      ],
+      encoding_format: "float"
     })
-    return embed.embeddings.float[0];
+
+    return embedding.data[0].embedding;
+
+
+  }catch(error)
+  {
+    console.log("Embedding Error:", error.message);
+    throw error;
+  }
 }
+
+// async function getEmbedding(text)
+// {
+//     const embed = await cohere.embed({
+//         texts: [text],
+//         model: "embed-v4.0",
+//         input_type: "search_document", // Mandatory for v3 and v4 models
+//         embedding_types: ["float"],
+//     })
+//     return embed.embeddings.float[0];
+// }
+
+
+
 
 module.exports = { askAI, getEmbedding };

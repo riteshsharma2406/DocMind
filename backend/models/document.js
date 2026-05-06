@@ -7,13 +7,18 @@ const chunkSchema = new mongoose.Schema({
     fileName: String,
 });
 
-const documentSchema = new mongoose.Schema({
-    userId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true
+const documentSchema = new mongoose.Schema(
+    {
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true
+        },
+        chunks: [chunkSchema]
     },
-    chunks: [chunkSchema]
-});
+    {
+        timestamps: true
+    }
+);
 
 module.exports = mongoose.model("Document", documentSchema)
