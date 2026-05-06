@@ -5,3 +5,4 @@ backend/data/data.json
 backend/data/.gitkeep
 backend/uploads
 backend/data
+node_modules
