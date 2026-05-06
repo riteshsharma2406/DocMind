@@ -107,8 +107,8 @@ bash cd frontend npm install npm start
 
 ## 🔗 Live Demo
 
-- Frontend: https://docmind-3g4hb4ytu-riteshsharma2406s-projects.vercel.app/login
-- Backend: [https://your-backend.onrender.com ](https://docmind-backend-31ib.onrender.com) 
+- Frontend: [Vercel](https://docmind-3g4hb4ytu-riteshsharma2406s-projects.vercel.app/login)
+- Backend: [Render](https://docmind-backend-31ib.onrender.com) 
 
 ---
 
