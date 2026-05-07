@@ -75,7 +75,8 @@ RAG (Retrieval-Augmented Generation) is a technique where:
 ## 📦 Installation
 
 ### 1️⃣ Clone the repository
-bash git clone https://github.com/riteshsharma2406/DocMind.git cd DocMind 
+bash git clone https://github.com/riteshsharma2406/DocMind.git 
+cd DocMind 
 
 ---
 
@@ -84,7 +85,10 @@ bash cd backend npm install
 
 Create .env file:
 
-env PORT=3000 MONGO_URI=your_mongodb_uri JWT_SECRET=your_secret OPENROUTER_API_KEY=your_key 
+env PORT=3000 
+MONGO_URI=your_mongodb_uri 
+JWT_SECRET=your_secret 
+OPENROUTER_API_KEY=your_key 
 
 Run backend:
 
