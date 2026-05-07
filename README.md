@@ -37,14 +37,17 @@ This avoids hallucination and improves accuracy.
 
 ### Backend
 - Node.js  
-- Express.js  
+- Express.js
+- bcrypt
+- multer
+- jsonwebtoken
 - MongoDB (Mongoose)  
 
 ### AI & Processing
 - OpenRouter (LLM - GPT OSS model)  
 - Embeddings (OpenRouter / Cohere)  
 - PDF Parsing  
-- Custom text chunking  
+- Custom text chunking
 
 ---
 
